@@ -53,30 +53,30 @@ class HighQualityDepthCapture:
             # 1. 视差变换（可选，如果导致问题可以注释掉）
             # self.disparity_transform = rs.disparity_transform(True)
             # self.depth_to_disparity = rs.disparity_transform(False)
-            
+        
             # 2. 空间滤波器（降低强度以提高稳定性）
-            self.spatial = rs.spatial_filter()
+        self.spatial = rs.spatial_filter()
             self.spatial.set_option(rs.option.filter_magnitude, 1)  # 降低强度
             self.spatial.set_option(rs.option.filter_smooth_alpha, 0.3)  # 降低平滑程度
             self.spatial.set_option(rs.option.filter_smooth_delta, 10)  # 降低增量
-            
+        
             # 3. 时序滤波器（降低强度）
-            self.temporal = rs.temporal_filter()
+        self.temporal = rs.temporal_filter()
             self.temporal.set_option(rs.option.filter_smooth_alpha, 0.2)  # 降低平滑程度
             self.temporal.set_option(rs.option.filter_smooth_delta, 10)
-            
+        
             # 4. 孔洞填充滤波器
-            self.hole_filling = rs.hole_filling_filter()
-            
+        self.hole_filling = rs.hole_filling_filter()
+        
             # 简化滤波器链，移除可能导致问题的滤波器
-            self.filters = [
+        self.filters = [
                 # self.disparity_transform,  # 暂时注释掉可能导致问题的滤波器
-                self.spatial,
-                self.temporal,
+            self.spatial,
+            self.temporal,
                 # self.depth_to_disparity,  # 暂时注释掉可能导致问题的滤波器
-                self.hole_filling
-            ]
-            
+            self.hole_filling
+        ]
+        
             print("滤波器链设置成功")
             
         except Exception as e:
@@ -129,11 +129,11 @@ class HighQualityDepthCapture:
             
         filtered = depth_frame
         try:
-            for filter_obj in self.filters:
+        for filter_obj in self.filters:
                 if filtered is None:
                     return depth_frame
-                filtered = filter_obj.process(filtered)
-            return filtered
+            filtered = filter_obj.process(filtered)
+        return filtered
         except Exception as e:
             print(f"应用滤波器时出错: {str(e)}")
             return depth_frame  # 如果滤波失败，返回原始帧
@@ -172,42 +172,42 @@ class HighQualityDepthCapture:
             # 采集多帧
             for i in range(self.frames_to_average):
                 try:
-                    frames = self.pipeline.wait_for_frames(timeout_ms=5000)
+                frames = self.pipeline.wait_for_frames(timeout_ms=5000)
                     if not frames:
                         print(f"第 {i+1} 帧采集超时")
                         continue
                         
-                    aligned_frames = self.align.process(frames)
-                    
-                    depth_frame = aligned_frames.get_depth_frame()
-                    color_frame = aligned_frames.get_color_frame()
-                    
-                    if not depth_frame or not color_frame:
+                aligned_frames = self.align.process(frames)
+                
+                depth_frame = aligned_frames.get_depth_frame()
+                color_frame = aligned_frames.get_color_frame()
+                
+                if not depth_frame or not color_frame:
                         print(f"第 {i+1} 帧数据无效")
-                        continue
-                        
-                    # 应用滤波器链
+                    continue
+                    
+                # 应用滤波器链
                     try:
-                        filtered_depth = self.apply_filters(depth_frame)
+                filtered_depth = self.apply_filters(depth_frame)
                         if filtered_depth is None:
                             print(f"第 {i+1} 帧滤波失败")
                             continue
                     except Exception as e:
                         print(f"处理第 {i+1} 帧时出错: {str(e)}")
                         continue
-                    
-                    # 转换为numpy数组
-                    depth_image = np.asanyarray(filtered_depth.get_data())
+                
+                # 转换为numpy数组
+                depth_image = np.asanyarray(filtered_depth.get_data())
                     
                     # 检查深度图是否有效
                     if np.all(depth_image == 0) or not np.any(np.isfinite(depth_image)):
                         print(f"第 {i+1} 帧深度图无效")
                         continue
                     
-                    depth_frames.append(depth_image)
-                    last_color_frame = np.asanyarray(color_frame.get_data())
-                    
-                    print(f"\r已采集: {i+1}/{self.frames_to_average}", end="", flush=True)
+                depth_frames.append(depth_image)
+                last_color_frame = np.asanyarray(color_frame.get_data())
+                
+                print(f"\r已采集: {i+1}/{self.frames_to_average}", end="", flush=True)
                     
                 except Exception as e:
                     print(f"\n处理第 {i+1} 帧时出错: {str(e)}")
@@ -490,7 +490,7 @@ class ResultVisualizer:
             self.vis.destroy_window()
         except:
             pass
-
+            
 def main():
     # 创建采集器实例
     capturer = HighQualityDepthCapture(
