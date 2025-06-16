@@ -228,7 +228,7 @@ class VirtualCameraWithPointCloud:
         while self.pointcloud_running:
             if frame_count % 2 == 0:
                 self.update_robot_pose()
-                p.stepSimulation()1
+                p.stepSimulation()
 
             if frame_count % self.pointcloud_update_interval == 0:
                 flange_position, flange_orientation = self.get_end_effector_pose()
