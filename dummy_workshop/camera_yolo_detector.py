@@ -21,7 +21,7 @@ matplotlib.use('Agg')  # 使用非交互式后端
 import matplotlib.pyplot as plt
 
 # 添加CLI-Tool路径
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "CLI-Tool"))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "CLI_Tool"))
 
 import pybullet as p
 import pybullet_data

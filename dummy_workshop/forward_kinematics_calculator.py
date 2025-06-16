@@ -7,7 +7,7 @@ import time
 import numpy as np
 import xml.etree.ElementTree as ET
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "CLI-Tool"))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "CLI_Tool"))
 
 import pybullet as p
 import pybullet_data

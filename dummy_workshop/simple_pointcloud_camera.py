@@ -13,7 +13,7 @@ import numpy as np
 import cv2
 
 # 添加CLI-Tool路径
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "CLI-Tool"))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "CLI_Tool"))
 
 
 import pybullet as p

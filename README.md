@@ -1,6 +1,6 @@
 ## 基于Dummy2 任同学版本设计的简单开发程序
 
-### CLI-Tool
+### CLI_Tool
 是原始的终端交互程序，已经经过二次开发，在pybullet_robot_controller.py是一个将现实机械臂与拟真环境中的机械臂通过urdf文件实现同步的代码
 
 ### dummy_real_workshop

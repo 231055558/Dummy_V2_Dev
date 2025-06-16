@@ -44,7 +44,8 @@ class DummyRobotIntegrated:
         self.joint_indices = []
         self.joint_names = ['joint1', 'joint2', 'joint3', 'joint4', 'joint5', 'joint6']
         self.initial_angles = [0, -70, 180, 0, 0, 0]  # 真实机械臂初始位置（度）
-        self.initial_pose_angles = [0.0, -55.0, 150.0, -90.0, 0.0, 0.0]  # 初始位置姿态
+        self.initial_pose_angles_1 = [0.0, -55.0, 150.0, 0.0, 0.0, 0.0]  # 初始位置姿态
+        self.initial_pose_angles_2 = [0.0, -55.0, 150.0, -90.0, 0.0, 0.0]
         self.current_joint_angles = self.initial_angles.copy()
         self.base_position = [0, 0, 0]
         self.visualization_lines = []
@@ -176,17 +177,30 @@ class DummyRobotIntegrated:
             self.sync_to_real_robot()
         return success
 
-    def go(self):
+    def go_1(self):
         """
-        移动到工作位置 [0.0, -55.0, 150.0, -90.0, 0.0, 0.0]
+        移动到工作位置 [0.0, -55.0, 150.0, 0.0, 0.0, 0.0]
         Returns:
             bool: 是否成功
         """
         print("🎯 移动到工作位置...")
-        success = self.move_j(self.initial_pose_angles)
+        success = self.move_j(self.initial_pose_angles_1)
         if success and self.real_robot_connected:
             self.sync_to_real_robot()
         return success
+
+    def go_2(self):
+        """
+        移动到工作位置 [0.0, -55.0, 150.0, -90, 0.0, 0.0]
+        Returns:
+            bool: 是否成功
+        """
+        print("🎯 移动到工作位置...")
+        success = self.move_j(self.initial_pose_angles_2)
+        if success and self.real_robot_connected:
+            self.sync_to_real_robot()
+        return success
+
     
     def real_to_virtual_angles(self, real_angles):
         """将真实机械臂角度转换为虚拟环境角度"""
@@ -536,42 +550,17 @@ def main():
         print(kine)
         
         print("\n测试移动到工作位置...")
-        robot.go()
+
         time.sleep(5)  # 等待运动完成
 
         result = robot.current_joint_angles
 
         kine = robot.forward_kinematics(result)
         print(kine)
-        
-        # # 测试关节空间运动
-        # print("\n测试关节空间运动...")
-        # target_angles = [0, -45, 90, 0, 45, 0]
-        # if robot.move_j(target_angles):
-        #     print("关节运动成功")
-            
-        #     # 获取当前末端位姿
-        #     current_pose = robot.forward_kinematics(robot.current_joint_angles)
-        #     print("\n当前末端位姿:")
-        #     print(f"位置: {current_pose['position']}")
-        #     print(f"姿态 (弧度): {current_pose['euler_angles']}")
-        #     print(f"姿态 (度): {[math.degrees(angle) for angle in current_pose['euler_angles']]}")
-            
-        #     # 同步到真实机械臂
-        #     robot.sync_to_real_robot()
-        #     time.sleep(15)
 
         robot.back()
         time.sleep(5)
         
-        # # 测试笛卡尔空间运动
-        # print("\n测试笛卡尔空间运动...")
-        # target_position = [0.2, 0.2, 0.2]
-        # target_euler = [0, math.radians(45), 0]
-        # if robot.move_p(target_position, target_euler):
-        #     print("笛卡尔空间运动成功")
-        #     robot.sync_to_real_robot()
-        #     time.sleep(5)
         
     finally:
         robot.cleanup()
