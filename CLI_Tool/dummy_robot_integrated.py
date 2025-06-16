@@ -16,19 +16,64 @@ import time
 import numpy as np
 import threading
 
-# 添加fibre模块路径
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
-    os.path.realpath(__file__))), "CLI-Tool", "fibre", "python"))
+def setup_environment():
+    """设置环境变量和依赖路径"""
+    # 获取当前文件所在目录的绝对路径
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # 获取项目根目录
+    root_dir = os.path.dirname(current_dir)
+    
+    # 添加 CLI_Tool 目录到路径中（对于 ref_tool 模块）
+    if current_dir not in sys.path:
+        sys.path.append(current_dir)
+    
+    # 添加 fibre 模块路径
+    fibre_python_path = os.path.join(current_dir, "fibre")
+    if os.path.exists(fibre_python_path) and fibre_python_path not in sys.path:
+        sys.path.append(fibre_python_path)
+    
+    # 添加项目根目录到路径
+    if root_dir not in sys.path:
+        sys.path.append(root_dir)
 
-try:
-    import pybullet as p
-    import pybullet_data
-    from fibre import Logger, Event
-    import ref_tool
-except ImportError as e:
-    print(f"❌ 缺少依赖库: {e}")
-    print("请安装: pip install pybullet")
-    sys.exit(1)
+def import_dependencies():
+    """导入所需的依赖，并处理可能的导入错误"""
+    missing_deps = []
+    
+    try:
+        import pybullet as p
+        import pybullet_data
+    except ImportError:
+        missing_deps.append("pybullet")
+    
+    try:
+        from fibre import Logger, Event
+    except ImportError:
+        missing_deps.append("fibre")
+    
+    try:
+        import ref_tool
+    except ImportError:
+        missing_deps.append("ref_tool")
+    
+    if missing_deps:
+        print("❌ 缺少以下依赖库:")
+        for dep in missing_deps:
+            print(f"  - {dep}")
+        print("\n请安装必要的依赖:")
+        if "pybullet" in missing_deps:
+            print("pip install pybullet")
+        if "fibre" in missing_deps or "ref_tool" in missing_deps:
+            print("请确保 fibre 和 ref_tool 模块在正确的路径下")
+        sys.exit(1)
+    
+    return p, pybullet_data, Logger, Event, ref_tool
+
+# 设置环境
+setup_environment()
+
+# 导入依赖
+p, pybullet_data, Logger, Event, ref_tool = import_dependencies()
 
 class DummyRobotIntegrated:
     def __init__(self, connect_real_robot=False):
@@ -533,37 +578,37 @@ class DummyRobotIntegrated:
         else:
             print("⚠️ 角度映射可能存在问题，最大误差: {:.2e}".format(np.max(np.abs(conversion_error))))
 
-def main():
-    """示例用法"""
-    # 创建机器人控制器实例（选择是否连接真实机械臂）
-    robot = DummyRobotIntegrated(connect_real_robot=True)
-    time.sleep(5)  # 等待初始化完成
+# def main():
+#     """示例用法"""
+#     # 创建机器人控制器实例（选择是否连接真实机械臂）
+#     robot = DummyRobotIntegrated(connect_real_robot=True)
+#     time.sleep(5)  # 等待初始化完成
     
-    try:
-        # 测试back和go功能
-        print("\n测试回到初始位置...")
-        robot.back()
-        time.sleep(5)  # 等待运动完成
+#     try:
+#         # 测试back和go功能
+#         print("\n测试回到初始位置...")
+#         robot.back()
+#         time.sleep(5)  # 等待运动完成
 
-        result = robot.current_joint_angles
-        kine = robot.forward_kinematics(result)
-        print(kine)
+#         result = robot.current_joint_angles
+#         kine = robot.forward_kinematics(result)
+#         print(kine)
         
-        print("\n测试移动到工作位置...")
+#         print("\n测试移动到工作位置...")
 
-        time.sleep(5)  # 等待运动完成
+#         time.sleep(5)  # 等待运动完成
 
-        result = robot.current_joint_angles
+#         result = robot.current_joint_angles
 
-        kine = robot.forward_kinematics(result)
-        print(kine)
+#         kine = robot.forward_kinematics(result)
+#         print(kine)
 
-        robot.back()
-        time.sleep(5)
+#         robot.back()
+#         time.sleep(5)
         
         
-    finally:
-        robot.cleanup()
+#     finally:
+#         robot.cleanup()
 
-if __name__ == "__main__":
-    main() 
+# if __name__ == "__main__":
+#     main() 
