@@ -26,12 +26,13 @@ def main():
         robot.back()
         time.sleep(5)  # 等待运动完成
 
-        result = robot.current_joint_angles
-        kine = robot.forward_kinematics(result)
-        print(kine)
-        
-        print("\n测试移动到工作位置...")
+        robot.go_1()
+        time.sleep(5)
 
+        robot.go_2()
+        time.sleep(5)
+
+        robot.back()
         time.sleep(5)  # 等待运动完成
 
         result = robot.current_joint_angles
